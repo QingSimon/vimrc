@@ -16,96 +16,22 @@ call pathogen#helptags()
 
 
 """"""""""""""""""""""""""""""
-" => bufExplorer plugin
-""""""""""""""""""""""""""""""
-let g:bufExplorerDefaultHelp=0
-let g:bufExplorerShowRelativePath=1
-let g:bufExplorerFindActive=1
-let g:bufExplorerSortBy='name'
-map <leader>o :BufExplorer<cr>
-
-
-""""""""""""""""""""""""""""""
 " => MRU plugin
 """"""""""""""""""""""""""""""
 let MRU_Max_Entries = 400
 map <leader>f :MRU<CR>
 
-
-""""""""""""""""""""""""""""""
-" => YankStack
-""""""""""""""""""""""""""""""
-let g:yankstack_yank_keys = ['y', 'd']
-
-nmap <C-p> <Plug>yankstack_substitute_older_paste
-nmap <C-n> <Plug>yankstack_substitute_newer_paste
-
-
-""""""""""""""""""""""""""""""
-" => CTRL-P
-""""""""""""""""""""""""""""""
-let g:ctrlp_working_path_mode = 0
-
-" Quickly find and open a file in the current working directory
-let g:ctrlp_map = '<C-f>'
-map <leader>j :CtrlP<cr>
-
-" Quickly find and open a buffer
-map <leader>b :CtrlPBuffer<cr>
-
-let g:ctrlp_max_height = 20
-let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
-
-
-""""""""""""""""""""""""""""""
-" => ZenCoding
-""""""""""""""""""""""""""""""
-" Enable all functions in all modes
-let g:user_zen_mode='a'
-
-
-""""""""""""""""""""""""""""""
-" => snipMate (beside <TAB> support <CTRL-j>)
-""""""""""""""""""""""""""""""
-ino <C-j> <C-r>=snipMate#TriggerSnippet()<cr>
-snor <C-j> <esc>i<right><C-r>=snipMate#TriggerSnippet()<cr>
-let g:snipMate = { 'snippet_version' : 1 }
-
-
-""""""""""""""""""""""""""""""
-" => Vim grep
-""""""""""""""""""""""""""""""
-let Grep_Skip_Dirs = 'RCS CVS SCCS .svn generated'
-set grepprg=/bin/grep\ -nH
-
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Nerd Tree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:NERDTreeWinPos = "right"
+let g:NERDTreeWinPos = "left"
 let NERDTreeShowHidden=0
 let NERDTreeIgnore = ['\.pyc$', '__pycache__']
 let g:NERDTreeWinSize=35
 map <leader>nn :NERDTreeToggle<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => vim-multiple-cursors
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:multi_cursor_use_default_mapping=0
-
-" Default mapping
-let g:multi_cursor_start_word_key      = '<C-s>'
-let g:multi_cursor_select_all_word_key = '<A-s>'
-let g:multi_cursor_start_key           = 'g<C-s>'
-let g:multi_cursor_select_all_key      = 'g<A-s>'
-let g:multi_cursor_next_key            = '<C-s>'
-let g:multi_cursor_prev_key            = '<C-p>'
-let g:multi_cursor_skip_key            = '<C-x>'
-let g:multi_cursor_quit_key            = '<Esc>'
-
+map <leader>nf :NERDTreeMirror<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => surround.vim config
@@ -120,52 +46,54 @@ au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:lightline = {
       \ 'colorscheme': 'wombat',
+      \}
+
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ ['mode', 'paste'],
-      \             ['fugitive', 'readonly', 'filename', 'modified'] ],
+      \             ['fugitive', 'readonly', 'relativepath', 'modified'] ],
       \   'right': [ [ 'lineinfo' ], ['percent'] ]
       \ },
       \ 'component': {
       \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒":""}',
       \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
-      \   'fugitive': '%{exists("*FugitiveHead")?FugitiveHead():""}'
+      \   'fugitive': '%{exists("*Fugitive#head")?Fugitive#head():""}'
       \ },
       \ 'component_visible_condition': {
       \   'readonly': '(&filetype!="help"&& &readonly)',
       \   'modified': '(&filetype!="help"&&(&modified||!&modifiable))',
-      \   'fugitive': '(exists("*FugitiveHead") && ""!=FugitiveHead())'
+      \   'fugitive': '(exists("*Fugitive#head") && ""!=Fugitive#head())'
       \ },
       \ 'separator': { 'left': ' ', 'right': ' ' },
       \ 'subseparator': { 'left': ' ', 'right': ' ' }
       \ }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vimroom
+" => Syntastic (syntax checker)
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:goyo_width=100
-let g:goyo_margin_top = 2
-let g:goyo_margin_bottom = 2
-nnoremap <silent> <leader>z :Goyo<cr>
+" Python
+let g:syntastic_python_checkers=['pyflakes']
 
+" Javascript
+let g:syntastic_javascript_checkers=['jshint']
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Ale (syntax checker and linter)
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:ale_linters = {
-\   'javascript': ['eslint'],
-\   'python': ['flake8'],
-\   'go': ['go', 'golint', 'errcheck']
-\}
+" Go
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_go_checkers=['go', 'golint', 'errcheck']
 
-nmap <silent> <leader>a <Plug>(ale_next_wrap)
+" C/C++
+let g:syntastic_c_checkers=[]
+let g:syntastic_cpp_checkers=[]
 
-" Disabling highlighting
-let g:ale_set_highlights = 0
-
-" Only run linting when saving the file
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
-
+" Custom CoffeeScript SyntasticCheck
+func! SyntasticCheckCoffeescript()
+  let l:filename = substitute(expand("%:p"), '\(\w\+\)\.coffee', '.coffee.\1.js', '')
+  execute "tabedit " . l:filename
+  execute "SyntasticCheck"
+  execute "Errors"
+endfunc
+nnoremap <silent> <leader>c :call SyntasticCheckCoffeescript()<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Git gutter (Git diff)
@@ -173,16 +101,77 @@ let g:ale_lint_on_enter = 0
 let g:gitgutter_enabled=0
 nnoremap <silent> <leader>d :GitGutterToggle<cr>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Tag list (ctags)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
+"let Tlist_Show_One_File = 1         " 不同时显示多个文件的tag，只显示当前文件的
+"let Tlist_Exit_OnlyWindow = 1       " 如果taglist窗口是最后一个窗口，则推出vim
+"let Tlist_Use_Right_Window = 0      " 在右侧窗口中显示taglist窗口
+"let Tlist_Auto_Open = 1
+"set tags=tags;
+"set g:tagbar_ctags_bin = '/usr/local/bin/ctags'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => EditorConfig (project-specific EditorConfig rule)
+" => vim-glaive: maktaba配置管理工具
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:EditorConfig_exclude_patterns = ['fugitive://.*']
+call glaive#Install()
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => vim-codefmt: 代码格式化工具
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+augroup autoformat_settings
+  "autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType c,cpp,proto,javascript AutoFormatBuffer clang-format
+  "autocmd FileType dart AutoFormatBuffer dartfmt
+  "autocmd FileType go AutoFormatBuffer gofmt
+  "autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  "autocmd FileType java AutoFormatBuffer google-java-format
+  autocmd FileType python AutoFormatBuffer yapf
+  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
+  "autocmd FileType vue AutoFormatBuffer prettier
+augroup END
+" 使用google风格来格式化c/c++代码
+Glaive codefmt clang_format_style='google'
 
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => ultisnips: 代码块生成工具 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Fugitive
+if has("python")
+  let g:UltiSnipsUsePythonVersion = 2
+elseif has("python3")
+  let g:UltiSnipsUsePythonVersion = 3
+else
+  echom "Vim is not compiled with python"
+endif
+let g:snips_author='machaowei'
+let g:snips_email='859040734@qq.com'
+let g:snips_group='machaowei'
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim_runtime/my_plugins/snippets_config']
+let g:ultisnips_python_style='google'
+
+let g:UltiSnipsExpandTrigger="<C-o>"    " 触发键
+let g:UltiSnipsJumpForwardTrigger="<C-b>"
+
+" 自动插入文件注释
+function GenDocsSnip()
+  if count(['c','cpp','python'], &filetype)
+    execute "normal idocs "
+    execute "normal a"
+    call UltiSnips#ExpandSnippet()
+  endif
+endfunction
+autocmd BufNewFile * :call GenDocsSnip()
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => YouCompleteMe: 代码补全 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Copy the link to the line of a Git repository to the clipboard
-nnoremap <leader>v :.GBrowse!<CR>
-xnoremap <leader>v :'<'>GBrowse!<CR>
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:syntastic_python_checkers = ['python3']
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => restore_view: 光标位置和折叠信息自动保存
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set viewoptions=cursor,folds,slash,unix
+set viewdir=~/.vim_runtime/temp_dirs/viewdir

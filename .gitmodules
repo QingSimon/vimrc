@@ -1,0 +1,21 @@
+[submodule "my_plugins/YouCompleteMe"]
+	path = my_plugins/YouCompleteMe
+	url = https://github.com/ycm-core/YouCompleteMe.git
+[submodule "my_plugins/tagbar"]
+	path = my_plugins/tagbar
+	url = https://github.com/majutsushi/tagbar.git
+[submodule "my_plugins/ultisnips"]
+	path = my_plugins/ultisnips
+	url = https://github.com/SirVer/ultisnips.git
+[submodule "my_plugins/vim-codefmt"]
+	path = my_plugins/vim-codefmt
+	url = https://github.com/google/vim-codefmt.git
+[submodule "my_plugins/vim-glaive"]
+	path = my_plugins/vim-glaive
+	url = https://github.com/google/vim-glaive.git
+[submodule "my_plugins/vim-maktaba"]
+	path = my_plugins/vim-maktaba
+	url = https://github.com/google/vim-maktaba.git
+[submodule "my_plugins/vim-gutentags"]
+	path = my_plugins/vim-gutentags
+	url = https://github.com/ludovicchabant/vim-gutentags.git
