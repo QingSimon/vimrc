@@ -10,6 +10,9 @@ priority -49
 
 global !p
 
+import datetime
+import os
+
 def write_docstring_args(arglist, snip):
 	args = str(arglist).split(',')
 
@@ -17,38 +20,59 @@ def write_docstring_args(arglist, snip):
 		c = 0
 		for arg in args:
 			if c == 0:
-				snip.rv += arg
+				snip.rv += '{:s}:        information of {:s}'.format(arg.strip(), arg.strip())
 				c = 1
 			else:
-				snip += '*       : %s' % arg.strip()
+				snip += '// @param {:s}:        information of {:s}'.format(arg.strip(), arg.strip())
 	else:
-		snip.rv = args[0]
+		#snip.rv = args[0]
+		snip.rv += snip.mkline('{:s}:        information of {:s}'.format(args[0].strip(), args[0].strip()))
 
+def dyear():
+	"""Returns the current Year in YYYY format
+	"""
+	now = datetime.datetime.now()
+	rv=now.year
+	return rv
+
+def today():
+	"""Returns the current Date in DD-Mon-yyyy format
+	"""
+	now = datetime.datetime.now()
+	rv=now.strftime("%Y-%m-%d")
+	return rv
 
 endglobal
 
 ###########################################################################
 #                            TextMate Snippets                            #
 ###########################################################################
-snippet main
-int main(int argc, char *argv[])
-{
-	${0}
-	return 0;
-}
-endsnippet
 
-snippet forc "general for loop (for)"
-for (${6:auto} ${1:i} = ${2:v.begin()}; `!p import re; snip.rv = re.split("[^\w]",t[1])[-1]` ${4:!=} ${3:`!p m = re.search(r'^(?:(.*)(\.|->)begin\(\)|((?:std|boost)::)?begin\((.*)\))$', t[2]); snip.rv = (((m.group(3) if m.group(3) else "") + "end(" + m.group(4) + ")") if m.group(4) else (m.group(1) + m.group(2) + "end()")) if m else ""`}; ${5:++`!p snip.rv = t[1].split(" ")[-1]`}) {
-	${VISUAL}$0
-}
+snippet docs "doc string" b
+/**
+ * Copyright (c) `!p snip.rv = dyear()`-present, Ma Chaowei.
+ * All rights reserved.
+ *
+ *   File: ${2: `!p snip.rv=snip.fn`}
+ *   Author: `!p snip.rv=snip.opt("g:snips_author", "")`
+ *   Email: `!p snip.rv=snip.opt("g:snips_email", "")`
+ *   Group: `!p snip.rv=snip.opt("g:snips_group", "")`
+ *   Created: `!p snip.rv=today()`
+ *	 Description: ${1:Enter description of code}
+ */
+
+// Copyright Ma chaowei. All Rights Reserved.
+// -*- c++ -*-
+
+
 endsnippet
 
 snippet beginend "$1.begin(), $1.end() (beginend)"
 ${1:v}${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}begin(), $1${1/^.*?(-)?(>)?$/(?2::(?1:>:.))/}end()
 endsnippet
 
-snippet cl "class .. (class)"
+snippet class "class .. (class)"
+// Description:
 class ${1:`!p snip.rv = snip.basename or "name"`}
 {
 public:
@@ -64,7 +88,7 @@ snippet ns "namespace .. (namespace)"
 namespace${1/.+/ /m}${1:`!p snip.rv = snip.basename or "name"`}
 {
 	${VISUAL}$0
-}${1/.+/ \/* /m}$1${1/.+/ *\/ /m}
+}${1/.+/ \/\/ namespace /m}$1${1/.+/ /m}
 endsnippet
 
 snippet readfile "read file (readF)"
@@ -90,6 +114,15 @@ snippet tp "template <typename ..> (template)"
 template <typename ${1:_InputIter}>
 endsnippet
 
+snippet micro "An entire .h generator" b
+#ifndef ${1:`!p snip.rv = snip.basename or "name"`}
+#define $1
+
+
+
+#endif // $1
+endsnippet
+
 snippet cla "An entire .h generator" b
 #ifndef ${2:`!v substitute(vim_snippets#Filename('$1_H','ClassName'),'.*','\U&\E','')`}
 #define $2
@@ -109,79 +142,15 @@ endsnippet
 
 
 snippet fnc "Basic c++ doxygen function template" b
-/**
-* @brief: ${4:brief}
-*
-* @param: `!p write_docstring_args(t[3],snip)`
-*
-* @return: `!p snip.rv = t[1]`
-*/
+// Function information here
+//
+// @param: `!p write_docstring_args(t[3],snip)`
+//
+// @return: info of return 
+//
 ${1:ReturnType} ${2:FunctionName}(${3:param})
 {
 	${0:FunctionBody}
 }
-endsnippet
-
-snippet boost_test "Boost test module" b
-#define BOOST_TEST_MODULE ${1:TestModuleName}
-#include <boost/test/included/unit_test.hpp>
-
-BOOST_AUTO_TEST_CASE(${2:TestCaseName})
-{
-	${0:TestDefinition}
-}
-
-endsnippet
-
-snippet boost_suite "Boost test suite module" b
-#define BOOST_TEST_MODULE ${1:TestModuleName}
-#include <boost/test/included/unit_test.hpp>
-
-BOOST_AUTO_TEST_SUITE(${2:SuiteName})
-
-BOOST_AUTO_TEST_CASE(${3:TestCaseName})
-{
-	${0:TestDefinition}
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-endsnippet
-snippet boost_test_fixture "Boost test module with fixture" b
-#define BOOST_TEST_MODULE ${1:TestModuleName}
-#include <boost/test/included/unit_test.hpp>
-
-struct ${2:FixtureName} {
-	$2() {}
-	virtual ~$2() {}
-	/* define members here */
-};
-
-BOOST_FIXTURE_TEST_CASE(${3:SuiteName}, $2)
-{
-	${0:TestDefinition}
-}
-
-endsnippet
-
-snippet boost_suite_fixture "Boost test suite with fixture" b
-#define BOOST_TEST_MODULE ${1:TestModuleName}
-#include <boost/test/included/unit_test.hpp>
-
-struct ${2:FixtureName} {
-	$2() {}
-	virtual ~$2() {}
-	/* define members here */
-};
-
-BOOST_FIXTURE_TEST_SUITE(${3:SuiteName}, $2)
-
-BOOST_AUTO_TEST_CASE(${4:TestCaseName})
-{
-	${0:TestDefinition}
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
 endsnippet
 # vim:ft=snippets:
